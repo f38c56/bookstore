@@ -1,11 +1,15 @@
 import React from "react";
 import { Form, Input, Button, Checkbox } from "antd";
 import styled from "styled-components";
+// eslint-disable-next-line
 import { Link } from "react-router-dom";
+import history from "./utils/history";
 
 class Login extends React.Component {
   private onFinish = (values: any) => {
     console.log("Success:", values);
+    history.push("/");
+    window.location.reload();
   };
 
   private onFinishFailed = (errorInfo: any) => {
@@ -53,11 +57,14 @@ class Login extends React.Component {
           </Form.Item>
 
           <Form.Item {...tailLayout}>
-            <Link to="/">
+            {/* <Link to="/">
               <Button type="primary" size="middle" htmlType="submit">
                 提交
               </Button>
-            </Link>
+            </Link> */}
+            <Button type="primary" size="middle" htmlType="submit">
+              提交
+            </Button>
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             <Checkbox>记住我</Checkbox>
           </Form.Item>
