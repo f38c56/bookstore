@@ -1,6 +1,6 @@
 import React from "react";
 import { Layout, Menu, Tag, Table } from "antd";
-import { PUBLIC_URL } from "./constants";
+import { PUBLIC_URL } from "../constants";
 import styled from "styled-components";
 import {
   UserOutlined,

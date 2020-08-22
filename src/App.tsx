@@ -1,12 +1,19 @@
 import React from "react";
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Route,
+  Switch,
+  useRouteMatch,
+  useParams,
+  // useLocation
+} from "react-router-dom";
 import CommonHeader from "./components/CommonHeader";
 import BookList from "./components/BookList";
 import Payment from "./components/Payment";
 import TopBar from "./components/fragments/TopBar";
 import BookDetail from "./components/fragments/BookDetail";
 import Login from "./components/Login";
-import Admin from "./components/Admin";
+import Admin from "./components/admin/Admin";
 import "./App.css";
 
 class App extends React.Component {
@@ -57,11 +64,39 @@ class App extends React.Component {
             <Route exact path="/admin">
               <Admin />
             </Route>
+            <Route path="/admin/user/delete">
+              <DeleteUser />
+            </Route>
           </Switch>
         </div>
       </Router>
     );
   }
+}
+
+function DeleteUser() {
+  let match = useRouteMatch();
+
+  return (
+    <div>
+      <h2>Delete Users</h2>
+
+      <Switch>
+        <Route path={`${match.path}/:userId`}>
+          <DeletedUser />
+        </Route>
+        <Route path={match.path}>
+          <h3>Please delete a user.</h3>
+        </Route>
+      </Switch>
+    </div>
+  );
+}
+
+function DeletedUser() {
+  let { userId } = useParams();
+  console.log(userId);
+  return <h3>Requested user ID: {userId}</h3>;
 }
 
 export default App;
