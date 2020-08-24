@@ -61,7 +61,7 @@ class App extends React.Component {
             <Route exact path="/login">
               <Login />
             </Route>
-            <Route exact path="/admin">
+            <Route path="/admin">
               <Admin />
             </Route>
             <Route path="/admin/user/delete">

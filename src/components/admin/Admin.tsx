@@ -1,5 +1,6 @@
 import React from "react";
-import { Layout, Menu, Tag, Table } from "antd";
+// eslint-disable-next-line
+import { Layout, Menu, message, Table, Button, Input, Form, Select } from "antd";
 import { PUBLIC_URL } from "../constants";
 import styled from "styled-components";
 import {
@@ -7,6 +8,7 @@ import {
   LaptopOutlined,
   NotificationOutlined,
 } from "@ant-design/icons";
+import { Route, Switch, Link } from "react-router-dom";
 
 const { SubMenu } = Menu;
 // eslint-disable-next-line
@@ -29,8 +31,27 @@ class Admin extends React.Component {
     });
   }
 
+  private removeItem = (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
+    const id = event.currentTarget.getAttribute("value");
+    console.log(id);
+    let tmpList: any[] = [...this.state.list];
+    for (let i = 0; i < tmpList.length; i++) {
+      if (tmpList[i].id === id) {
+        message.success(`已移除${tmpList[i].name}`);
+        tmpList.splice(i, 1);
+      }
+    }
+    this.setState({
+      list: tmpList,
+    });
+    console.log(this.state.list);
+    // message.success(`已移除${id}用户`);
+  };
+
   render() {
     const { list } = this.state;
+    let url = window.location.href;
+    console.log("url参数为: ", url);
 
     const columns = [
       {
@@ -62,13 +83,97 @@ class Admin extends React.Component {
             color = "blue";
           }
           return (
-            <Tag color={color} key={typeName}>
+            // <Tag color={color} key={typeName}>
+            //   {typeName}
+            // </Tag>
+            <Button color={color} size="small">
               {typeName}
-            </Tag>
+            </Button>
           );
         },
       },
     ];
+
+    const deleteColumns = [
+      {
+        title: "用户ID",
+        dataIndex: "id",
+        key: "id",
+        width: 200,
+      },
+      {
+        title: "用户名",
+        dataIndex: "name",
+        key: "name",
+        width: 200,
+      },
+      {
+        title: "用户邮箱",
+        dataIndex: "email",
+        key: "email",
+      },
+      {
+        title: "操作",
+        dataIndex: "id",
+        key: "operation",
+        render: (id: any) => {
+          return (
+            <Button danger type="primary" size="small" value={id} onClick={this.removeItem}>
+              删除
+            </Button>
+          );
+        },
+      },
+    ];
+
+    const editColumns = [
+      {
+        title: "用户ID",
+        dataIndex: "id",
+        key: "id",
+        width: 200,
+      },
+      {
+        title: "用户名",
+        dataIndex: "name",
+        key: "name",
+        width: 200,
+      },
+      {
+        title: "用户邮箱",
+        dataIndex: "email",
+        key: "email",
+      },
+      {
+        title: "操作",
+        dataIndex: "type",
+        key: "type",
+        render: (typeName: any) => {
+          return (
+            <Button type="primary" size="small">
+              修改
+            </Button>
+          );
+        },
+      },
+    ];
+
+    const onFinish = (values: any) => {
+      console.log("Success:", values);
+    };
+
+    const onFinishFailed = (errorInfo: any) => {
+      console.log("Failed:", errorInfo);
+    };
+
+    const layout = {
+      labelCol: { span: 8 },
+      wrapperCol: { span: 16 },
+    };
+
+    const tailLayout = {
+      wrapperCol: { offset: 8, span: 16 },
+    };
 
     return (
       <StyledAdmin>
@@ -96,10 +201,27 @@ class Admin extends React.Component {
                       </span>
                     }
                   >
-                    <Menu.Item key="1">会员检索</Menu.Item>
-                    <Menu.Item key="2">添加会员</Menu.Item>
-                    <Menu.Item key="3">删除会员</Menu.Item>
-                    <Menu.Item key="4">更新会员</Menu.Item>
+                    <Menu.Item key="1">
+                      <Link to="/admin" style={{ color: "black" }}>
+                        会员检索
+                      </Link>
+                    </Menu.Item>
+                    <Menu.Item key="2">
+                      <Link to="/admin/user/add" style={{ color: "black" }}>
+                        添加会员
+                      </Link>
+                    </Menu.Item>
+
+                    <Menu.Item key="3">
+                      <Link to="/admin/user/delete" style={{ color: "black" }}>
+                        删除会员
+                      </Link>
+                    </Menu.Item>
+                    <Menu.Item key="4">
+                      <Link to="/admin/user/edit" style={{ color: "black" }}>
+                        更新会员
+                      </Link>
+                    </Menu.Item>
                   </SubMenu>
                   <SubMenu
                     key="sub2"
@@ -131,15 +253,121 @@ class Admin extends React.Component {
                   </SubMenu>
                 </Menu>
               </Sider>
-              <Content style={{ padding: "0 10px" }}>
-                <div style={{ padding: "0 35px" }}>
-                  <Table
-                    rowKey={(record: any) => record.id}
-                    dataSource={list}
-                    columns={columns}
-                  />
-                </div>
-              </Content>
+              <Switch>
+                <Route exact path="/admin">
+                  <Content style={{ padding: "0 10px" }}>
+                    <div style={{ padding: "0 35px" }}>
+                      <Table
+                        rowKey={(record: any) => record.id}
+                        dataSource={list}
+                        columns={columns}
+                      />
+                    </div>
+                  </Content>
+                </Route>
+                <Route exact path="/admin/user/delete">
+                  <Content style={{ padding: "0 10px" }}>
+                    <div style={{ padding: "0 35px" }}>
+                      <Table
+                        rowKey={(record: any) => record.id}
+                        dataSource={list}
+                        columns={deleteColumns}
+                      />
+                    </div>
+                  </Content>
+                </Route>
+                <Route exact path="/admin/user/edit">
+                  <Content style={{ padding: "0 10px" }}>
+                    <div style={{ padding: "0 35px" }}>
+                      <Table
+                        rowKey={(record: any) => record.id}
+                        dataSource={list}
+                        columns={editColumns}
+                      />
+                    </div>
+                  </Content>
+                </Route>
+                <Route exact path="/admin/user/add">
+                  <div style={{ width: "40%", padding: "50px" }}>
+                    <Form
+                      {...layout}
+                      name="basic"
+                      initialValues={{ remember: true }}
+                      onFinish={onFinish}
+                      onFinishFailed={onFinishFailed}
+                    >
+                      <Form.Item
+                        label="用户ID"
+                        name="userid"
+                        rules={[
+                          {
+                            required: true,
+                            message: "请输入用户ID",
+                          },
+                        ]}
+                      >
+                        <Input />
+                      </Form.Item>
+
+                      <Form.Item
+                        label="用户名"
+                        name="username"
+                        rules={[
+                          {
+                            required: true,
+                            message: "请输入用户名",
+                          },
+                        ]}
+                      >
+                        <Input />
+                      </Form.Item>
+
+                      <Form.Item
+                        label="用户种类"
+                        name="usertype"
+                        rules={[
+                          {
+                            required: true,
+                            message: "请选择用户种类",
+                          },
+                        ]}
+                      >
+                        <Select>
+                          <Select.Option value="admin">管理员</Select.Option>
+                          <Select.Option value="user">会员</Select.Option>
+                        </Select>
+                      </Form.Item>
+
+                      <Form.Item
+                        label="密码"
+                        name="password"
+                        rules={[
+                          {
+                            required: true,
+                            message: "请输入密码",
+                          },
+                        ]}
+                      >
+                        <Input.Password />
+                      </Form.Item>
+
+                      {/* <Form.Item
+                        {...tailLayout}
+                        name="remember"
+                        valuePropName="checked"
+                      >
+                        <Checkbox>Remember me</Checkbox>
+                      </Form.Item> */}
+
+                      <Form.Item {...tailLayout}>
+                        <Button type="primary" htmlType="submit">
+                          提交
+                        </Button>
+                      </Form.Item>
+                    </Form>
+                  </div>
+                </Route>
+              </Switch>
             </Layout>
           </Content>
         </Layout>
@@ -167,6 +395,10 @@ const StyledAdmin = styled.div`
   }
 
   a {
+    color: white;
+  }
+
+  menu-link {
     color: white;
   }
 
