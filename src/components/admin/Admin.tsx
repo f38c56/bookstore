@@ -9,6 +9,7 @@ import {
   NotificationOutlined,
 } from "@ant-design/icons";
 import { Route, Switch, Link } from "react-router-dom";
+import * as history from "history";
 
 const { SubMenu } = Menu;
 // eslint-disable-next-line
@@ -47,6 +48,10 @@ class Admin extends React.Component {
     console.log(this.state.list);
     // message.success(`已移除${id}用户`);
   };
+
+  private onClickEdit = () => {
+    message.error(`暂不支持修改用户信息`);
+  }
 
   render() {
     const { list } = this.state;
@@ -150,7 +155,7 @@ class Admin extends React.Component {
         key: "type",
         render: (typeName: any) => {
           return (
-            <Button type="primary" size="small">
+            <Button type="primary" size="small" onClick={this.onClickEdit}>
               修改
             </Button>
           );
@@ -158,8 +163,19 @@ class Admin extends React.Component {
       },
     ];
 
-    const onFinish = (values: any) => {
-      console.log("Success:", values);
+    const onFinish = (value: any) => {
+      console.log("Success:", value);
+      let newUser: any = {}
+      newUser.id = value.userid;
+      newUser.name = value.username;
+      newUser.type = value.usertype;
+      newUser.email = value.email;
+      let tmpList: any[] = [...this.state.list];
+      tmpList.push(newUser)
+      this.setState({
+        list: tmpList,
+      });
+      history.createBrowserHistory().push("/admin");
     };
 
     const onFinishFailed = (errorInfo: any) => {
@@ -323,6 +339,19 @@ class Admin extends React.Component {
                       </Form.Item>
 
                       <Form.Item
+                        label="电子邮箱"
+                        name="email"
+                        rules={[
+                          {
+                            required: true,
+                            message: "请输入电子邮箱",
+                          },
+                        ]}
+                      >
+                        <Input />
+                      </Form.Item>
+
+                      <Form.Item
                         label="用户种类"
                         name="usertype"
                         rules={[
@@ -333,8 +362,8 @@ class Admin extends React.Component {
                         ]}
                       >
                         <Select>
-                          <Select.Option value="admin">管理员</Select.Option>
-                          <Select.Option value="user">会员</Select.Option>
+                          <Select.Option value="管理员">管理员</Select.Option>
+                          <Select.Option value="会员">会员</Select.Option>
                         </Select>
                       </Form.Item>
 
